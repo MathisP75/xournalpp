@@ -161,6 +161,13 @@ void StylusInputHandler::setPressedState(InputEvent const& event) {
         if (this->eventsToIgnore == 0) {
             this->deviceClassPressed = true;
         }
+        // Sync modifier states from event state mask, since under some compositors (e.g. Hyprland) button release
+        // events for the stylus side buttons may not be delivered as discrete BUTTON_RELEASE_EVENTs while the tip
+        // is in contact (Wayland implicit grab). 
+        if (this->modifier2)
+            this->modifier2 = static_cast<bool>(event.state & GDK_BUTTON2_MASK);
+        if (this->modifier3)
+            this->modifier3 = static_cast<bool>(event.state & GDK_BUTTON3_MASK);
     } else if (event.type == BUTTON_RELEASE_EVENT)  // mouse button released or pen not touching surface anymore
     {
         switch (event.button) {
